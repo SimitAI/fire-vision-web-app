@@ -1,6 +1,4 @@
-import BoardCreator from "../objects/BoardCreator";
 import Tile from "./Tile";
-import Point from "../objects/Point";
 import {useEffect, useState} from "react";
 
 const Board = (props) => {
@@ -13,7 +11,7 @@ const Board = (props) => {
 
     const {
         boardCreator,
-        colorMap
+        tileStateMap
     } = {...props}
 
     const [focusedTileId, setFocusedTileId] = useState(null);
@@ -50,7 +48,7 @@ const Board = (props) => {
                                         height={tile.height}
                                         prevPoint={tile.prevPoint}
                                         nextPoint={boardCreator.getTileNextPoint(tile.id, focusedTileId)}
-                                        color={colorMap[tile.id]}
+                                        state={tileStateMap[tile.id]}
                                         onClickHandler={tileClickHandler}
                                         isFocused={focusedTileId === tile.id}
                                         prevFocused={prevFocusedTileId === tile.id}

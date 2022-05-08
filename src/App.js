@@ -1,122 +1,148 @@
-import Tile from "./components/Tile";
 import Point from "./objects/Point";
 import BoardCreator from "./objects/BoardCreator";
 import {useEffect, useState} from "react";
 import Board from "./components/Board";
-import MovingTile from "./components/MovigTile";
+import Drone from "./components/Drone";
+import TileState from "./objects/TileState";
 
 function App() {
 
     const appStyle = {
         width: "100%",
         height: "100%",
+        backgroundImage: "linear-gradient(180deg, rgba(157,177,164,1) 5%, rgba(101,117,112,1) 40%, rgba(55,72,69,1) 75%, rgba(8,27,25,1) 100%)"
     }
 
     const rowNum = 8;
     const colNum = 8;
-    const boardPadding = 100;
-    const tileWidth = 52;
-    const tileHeight = 52;
-    const defaultTileColor = "lightblue";
-    const tilePadding = 8;
+    const minSide = Math.min(Point.screenW, Point.screenH);
+    const tilePadding = minSide / 100;
+    const tileWidth = ( minSide /  (rowNum + 2) ) - tilePadding;
+    const tileHeight = ( minSide / (colNum + 2) ) - tilePadding;
+    const boardPadding = ( tileWidth + tileHeight ) / 2 + tilePadding;
     const boardStartPoint = new Point(
         Point.screen00.x + boardPadding,
         Point.screen00.y + boardPadding,
         0
     );
-    const boardCreator = new BoardCreator(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding, defaultTileColor);
-    
+    const boardCreator = new BoardCreator(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding);
 
-    const movingTiles = [
-        {
-            id: 0,
-            path: [
-                0, 1, 2, 3,
-                11, 10, 9, 8,
-                16, 17, 18, 19,
-                27, 26, 25, 24
-            ],
-            color: "Teal"
-        },
-        {
-            id: 1,
-            path: [
-                7, 6, 5, 4,
-                12, 13, 14, 15,
-                23, 22, 21, 20,
-                28, 29, 30, 31
-            ],
-            color: "DarkSalmon"
-        },
-        {
-            id: 2,
-            path: [
-                56, 57, 58, 59,
-                51, 50, 49, 48,
-                40, 41, 42, 43,
-                35, 34, 33, 32,
-            ],
-            color: "DimGrey"
-        },
-        {
-            id: 3,
-            path: [
-                63, 62, 61, 60,
-                52, 53, 54, 55,
-                47, 46, 45, 44,
-                36, 37, 38, 39
-            ],
-            color: "Orchid"
-        }
-    ];
 
-    const [movingTileIndices, setMovingTileIndices] = useState({
-        0: 0,
-        1: 0,
-        2: 0,
-        3: 0
-    });
+    const droneColor = "gainsboro";
+    const droneScale = 0.75;
+    const [drones, setDrones] = useState([]);
+    const [changedTileStates, setChangedTileStates] = useState({});
+    const [tilesBeingExplored, setTilesBeingExplored] = useState([]);
 
-    const [changedTileColors, setChangedTileColors] = useState({});
-
-    const randomColor = () => {
+    const randomState = () => {
         let rnd = Math.random();
         if (rnd >= 0 && rnd < 0.8) {
-            return "green";
+            return TileState.SAFE;
         } else if (rnd >= 0.8 && rnd <= 0.9) {
-            return "red";
+            return TileState.FIRE;
         } else {
-            return "blue";
+            return TileState.HUMAN;
         }
-        return
     }
+
+    useEffect(() => {
+        setDrones([
+            {
+                id: 0,
+                path: [
+                    0, 1, 2, 3,
+                    11, 10, 9, 8,
+                    16, 17, 18, 19,
+                    27, 26, 25, 24
+                ],
+                index: 0
+            },
+            {
+                id: 1,
+                path: [
+                    7, 6, 5, 4,
+                    12, 13, 14, 15,
+                    23, 22, 21, 20,
+                    28, 29, 30, 31
+                ],
+                index: 0
+            },
+            {
+                id: 2,
+                path: [
+                    56, 57, 58, 59,
+                    51, 50, 49, 48,
+                    40, 41, 42, 43,
+                    35, 34, 33, 32,
+                ],
+                index: 0
+            },
+            {
+                id: 3,
+                path: [
+                    63, 62, 61, 60,
+                    52, 53, 54, 55,
+                    47, 46, 45, 44,
+                    36, 37, 38, 39
+                ],
+                index: 0
+            }
+        ]);
+    }, []);
+
+    useEffect(() => {
+        const startExploringTiles = () => {
+            const newTilesBeingExploredState = [];
+
+            drones.forEach(drone => {
+                let nextPos = drone.path[drone.index];
+                let id = Math.floor(nextPos / 8) * 10 + nextPos % 8;
+                newTilesBeingExploredState.push(id);
+            });
+
+            setTilesBeingExplored(newTilesBeingExploredState);
+        }
+
+        startExploringTiles();
+    }, [drones]);
+
+    useEffect(() => {
+        tilesBeingExplored.forEach(id => {
+            setChangedTileStates(prevState=> ({
+                ...prevState,
+                [id]: TileState.EXPLORING
+            }));
+        })
+    }, [tilesBeingExplored]);
 
     const btnClickHandler = (e) => {
-        movingTiles.forEach(movingTile => {
-            let currIndex = movingTileIndices[movingTile.id];
-            let currPos = movingTile.path[currIndex];
-            let id = Math.floor(currPos / 8) * 10 + currPos % 8;
+        const newDronesState = [];
 
-            setMovingTileIndices(prevState=> ({
+        drones.forEach(drone => {
+            let currPos = drone.path[drone.index];
+            let id = Math.floor(currPos / 8) * 10 + currPos % 8;
+            drone.index = (drone.index + 1) % drone.path.length;
+
+            newDronesState.push(drone);
+
+            setChangedTileStates(prevState=> ({
                 ...prevState,
-                [movingTile.id]: (currIndex + 1) % movingTile.path.length
-            }));
-            setChangedTileColors(prevState=> ({
-                ...prevState,
-                [id]: randomColor()
+                [id]: randomState()
             }));
         });
+
+        setDrones(newDronesState);
     }
 
-    const createTileColorMap = () => {
-        let colorMap = {}
+    const createTileStateMap = () => {
+        let stateMap = {}
         for (let i = 0; i <= rowNum * colNum; i++) {
             for (let j = 0; j <= colNum; j++) {
-                let changedColor = changedTileColors[i * 10 + j];
-                colorMap[i * 10 + j] = changedColor ? changedColor :"lightblue";
+                let changedState = changedTileStates[i * 10 + j];
+                stateMap[i * 10 + j] = changedState ? changedState : TileState.UNEXPLORED;
             }  
         }
-        return colorMap;
+        return stateMap;
     }
 
     const drawApp = () => {
@@ -128,22 +154,23 @@ function App() {
                 <div>
                     <Board
                         boardCreator={boardCreator}
-                        colorMap={createTileColorMap()}
+                        tileStateMap={createTileStateMap()}
                     />
                 </div>
                 <div>
                     {
-                        movingTiles.map(movingTile => 
+                        drones.map(drone =>
                             <div 
-                                key={movingTile.id}
+                                key={drone.id}
                             >
-                                <MovingTile
-                                    id={movingTile.id}
+                                <Drone
+                                    id={drone.id}
                                     boardCreator={boardCreator}
-                                    index={movingTile.path[
-                                        movingTileIndices[movingTile.id]
-                                    ]}
-                                    color={movingTile.color}
+                                    index={drone.path[drone.index]}
+                                    scale={droneScale}
+                                    width={tileWidth}
+                                    height={tileHeight}
+                                    color={droneColor}
                                 />
                             </div>
                         )

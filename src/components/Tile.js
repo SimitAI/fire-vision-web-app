@@ -1,13 +1,13 @@
-import {Motion, spring} from "react-motion";
-import Point from "../objects/Point";
+import BaseObject from "./BaseObject"
 import {useEffect, useState} from "react";
+import TileState from "../objects/TileState";
 
 const Tile = (props) => {
 
     const id = props.id;
     const width = props.width;
     const height = props.height;
-    const color = props.color;
+    const state = props.state;
 
     const prevPoint = props.prevPoint;
     const nextPoint = props.nextPoint;
@@ -18,6 +18,23 @@ const Tile = (props) => {
     const [scalar, setScalar] = useState(1);
     const [zIndex, setZIndex] = useState(1);
 
+    const getColor = () => {
+        switch (state) {
+            case TileState.UNEXPLORED:
+                return "#cfe2de";
+            case TileState.EXPLORING:
+                return "yellow";
+            case TileState.SAFE:
+                return "green";
+            case TileState.HUMAN:
+                return "blue";
+            case TileState.FIRE:
+                return "red";
+            default:
+                return "black";
+        }
+    }
+
     const tileStyle = {
         margin: 0,
         padding: 0,
@@ -26,9 +43,9 @@ const Tile = (props) => {
         top: prevPoint.y,
         width: `${width}px`,
         height: `${height}px`,
-        backgroundColor: color,
-        border: id >= 10000 ? "10px outset white" : isFocused ? "0.1px dashed black" : "",
-        borderRadius: "4px",
+        backgroundColor: getColor(),
+        border: isFocused ? "0.1px dashed black" : "",
+        borderRadius: `${width / 6}px`,
         boxShadow: "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px"
     }
 
@@ -45,46 +62,29 @@ const Tile = (props) => {
         return (
           <div>
               <div>
-                  <img width={width} height={height} src={"https://emojipedia-us.s3.amazonaws.com/source/skype/289/fire_1f525.png"}/>
+                  <img
+                      width={width}
+                      height={height}
+                      src={"https://emojipedia-us.s3.amazonaws.com/source/skype/289/fire_1f525.png"}
+                      alt={"fire"}
+                  />
               </div>
           </div>
         );
     }
 
     return (
-        <Motion
-            defaultStyle={{
-                x: prevPoint.x,
-                y: prevPoint.y,
-                z: prevPoint.z,
-                s: 1,
-                o: 0,
-                zIndex: 0
-            }}
-            style={{
-                x: spring( nextPoint.x, {damping: 12}),
-                y: spring( nextPoint.y, {damping: 12}),
-                z: spring( nextPoint.z, {damping: 12}),
-                s: spring(scalar),
-                o: spring(1),
-                zIndex: zIndex
-            }}
+        <BaseObject
+            style={tileStyle}
+            prevPoint={prevPoint}
+            nextPoint={nextPoint}
+            scalar={scalar}
+            opacity={1}
+            zIndex={zIndex}
+            onClickHandler={onClickHandler}
         >
-            {(args) => (
-                <div
-                    style={{
-                        ...tileStyle,
-                        zIndex: `${args.zIndex}`,
-                        transform: `translate3d(${args.x}px, ${args.y}px, ${args.z}px) scale(${args.s})`,
-                        opacity: `${args.o}`
-                    }}
-                    onClick={onClickHandler}
-                >
-                    {isFocused ? info() : null}
-                </div>
-
-            )}
-        </Motion>
+            {isFocused ? info() : null}
+        </BaseObject>
     );
 }
 

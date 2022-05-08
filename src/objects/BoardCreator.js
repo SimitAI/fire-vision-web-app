@@ -2,14 +2,13 @@ import Point from "./Point";
 
 class BoardCreator {
 
-    constructor(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding, defaultTileColor) {
+    constructor(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding) {
         this.rowNum = rowNum;
         this.colNum = colNum;
         this.boardStartPoint = boardStartPoint;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.tilePadding = tilePadding;
-        this.defaultTileColor = defaultTileColor;
         this.board = [];
         this.tilePoints = [];
     }
@@ -40,8 +39,7 @@ class BoardCreator {
                         0,
                         0,
                         0
-                    ),
-                    color: this.defaultTileColor
+                    )
                 });
             }
             this.board.push(row);

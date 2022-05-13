@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import Board from "./components/Board";
 import Drone from "./components/Drone";
 import TileState from "./objects/TileState";
+import Random from "./objects/Random";
 
 function App() {
 
@@ -17,16 +18,15 @@ function App() {
     const colNum = 8;
     const minSide = Math.min(Point.screenW, Point.screenH);
     const tilePadding = minSide / 100;
-    const tileWidth = ( minSide /  (rowNum + 2) ) - tilePadding;
-    const tileHeight = ( minSide / (colNum + 2) ) - tilePadding;
-    const boardPadding = ( tileWidth + tileHeight ) / 2 + tilePadding;
+    const tileWidth = (minSide / (rowNum + 2)) - tilePadding;
+    const tileHeight = (minSide / (colNum + 2)) - tilePadding;
+    const boardPadding = (tileWidth + tileHeight) / 2 + tilePadding;
     const boardStartPoint = new Point(
         Point.screen00.x + boardPadding,
         Point.screen00.y + boardPadding,
         0
     );
     const boardCreator = new BoardCreator(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding);
-
 
     const droneColor = "gainsboro";
     const droneScale = 0.75;
@@ -35,10 +35,9 @@ function App() {
     const [tilesBeingExplored, setTilesBeingExplored] = useState([]);
 
     const randomState = () => {
-        let rnd = Math.random();
-        if (rnd >= 0 && rnd < 0.8) {
+        if (Random.randPercent(80)) {
             return TileState.SAFE;
-        } else if (rnd >= 0.8 && rnd <= 0.9) {
+        } else if (Random.randPercent(30)) {
             return TileState.FIRE;
         } else {
             return TileState.HUMAN;
@@ -108,7 +107,7 @@ function App() {
 
     useEffect(() => {
         tilesBeingExplored.forEach(id => {
-            setChangedTileStates(prevState=> ({
+            setChangedTileStates(prevState => ({
                 ...prevState,
                 [id]: TileState.EXPLORING
             }));
@@ -125,7 +124,7 @@ function App() {
 
             newDronesState.push(drone);
 
-            setChangedTileStates(prevState=> ({
+            setChangedTileStates(prevState => ({
                 ...prevState,
                 [id]: randomState()
             }));
@@ -140,7 +139,7 @@ function App() {
             for (let j = 0; j <= colNum; j++) {
                 let changedState = changedTileStates[i * 10 + j];
                 stateMap[i * 10 + j] = changedState ? changedState : TileState.UNEXPLORED;
-            }  
+            }
         }
         return stateMap;
     }
@@ -160,7 +159,7 @@ function App() {
                 <div>
                     {
                         drones.map(drone =>
-                            <div 
+                            <div
                                 key={drone.id}
                             >
                                 <Drone
@@ -175,7 +174,7 @@ function App() {
                             </div>
                         )
                     }
-                    
+
                 </div>
                 <div>
                     <button
@@ -184,14 +183,14 @@ function App() {
                         Click
                     </button>
                 </div>
-    
+
             </div>
-    
+
         );
     }
 
     return drawApp();
-    
+
 }
 
 export default App;

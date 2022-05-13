@@ -1,4 +1,5 @@
 import Point from "./Point";
+import ImageManager from "./ImageManager";
 
 class BoardCreator {
 
@@ -11,6 +12,7 @@ class BoardCreator {
         this.tilePadding = tilePadding;
         this.board = [];
         this.tilePoints = [];
+        this.imageManager = new ImageManager();
     }
 
     create() {
@@ -21,7 +23,7 @@ class BoardCreator {
                 tiles: []
             };
             for (let j = 0; j < this.colNum; j++) {
-                
+
                 let prevPoint = new Point(
                     this.boardStartPoint.x + (this.tileWidth + this.tilePadding) * j,
                     this.boardStartPoint.y + (this.tileHeight + this.tilePadding) * i,
@@ -39,7 +41,8 @@ class BoardCreator {
                         0,
                         0,
                         0
-                    )
+                    ),
+                    image: this.imageManager.getRandomImage()
                 });
             }
             this.board.push(row);
@@ -59,15 +62,15 @@ class BoardCreator {
 
         if (id === focusedTileId) {
             return new Point(
-                - tile.prevPoint.x + this.boardStartPoint.x + this.tileWidth * 5 - this.tilePadding * this.rowNum,
-                - tile.prevPoint.y + this.boardStartPoint.y + this.tileHeight * 5 - this.tilePadding * this.colNum,
+                -tile.prevPoint.x + this.boardStartPoint.x + this.tileWidth * 5 - this.tilePadding * this.rowNum,
+                -tile.prevPoint.y + this.boardStartPoint.y + this.tileHeight * 5 - this.tilePadding * this.colNum,
                 0);
         }
 
         return tile.nextPoint;
     }
 
-    getMovingObjectNextPoint(index) {
+    getDronePoint(index) {
         let nextPoint = this.tilePoints[index];
         return new Point(
             nextPoint.x - this.boardStartPoint.x,

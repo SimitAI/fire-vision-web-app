@@ -1,5 +1,5 @@
 import Tile from "./Tile";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 const Board = (props) => {
 
@@ -28,6 +28,7 @@ const Board = (props) => {
 
     const drawBoard = () => {
         boardCreator.create();
+        console.log(boardCreator.board);
         return (
             <div
                 id={"board"}
@@ -52,6 +53,7 @@ const Board = (props) => {
                                         onClickHandler={tileClickHandler}
                                         isFocused={focusedTileId === tile.id}
                                         prevFocused={prevFocusedTileId === tile.id}
+                                        image={tile.image}
                                     />
                                 )
                             }

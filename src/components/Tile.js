@@ -15,6 +15,9 @@ const Tile = (props) => {
     const isFocused = props.isFocused;
     const prevFocused = props.prevFocused;
 
+    const image = props.image;
+    const imageShift = 25;
+
     const [scalar, setScalar] = useState(1);
     const [zIndex, setZIndex] = useState(1);
 
@@ -49,9 +52,16 @@ const Tile = (props) => {
         boxShadow: "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px"
     }
 
+    const imageStyle = {
+        width: width - imageShift,
+        height: height - imageShift,
+        borderRadius: `${width / 6}px`,
+        margin: `${imageShift / 2}px 0px 0px ${imageShift / 2}px`,
+    }
+
     useEffect(() => {
         setScalar(isFocused ? 10 : 1);
-        setZIndex(isFocused ? 10: prevFocused ? 5 : 1);
+        setZIndex(isFocused ? 10 : prevFocused ? 5 : 1);
     }, [isFocused, prevFocused]);
 
     const onClickHandler = (e) => {
@@ -60,16 +70,15 @@ const Tile = (props) => {
 
     const info = () => {
         return (
-          <div>
-              <div>
-                  <img
-                      width={width}
-                      height={height}
-                      src={"https://emojipedia-us.s3.amazonaws.com/source/skype/289/fire_1f525.png"}
-                      alt={"fire"}
-                  />
-              </div>
-          </div>
+            <div>
+                <div>
+                    <img
+                        style={imageStyle}
+                        src={`${process.env.PUBLIC_URL}/${image}`}
+                        alt={"Image"}
+                    />
+                </div>
+            </div>
         );
     }
 

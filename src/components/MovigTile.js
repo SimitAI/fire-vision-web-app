@@ -1,5 +1,3 @@
-import BoardCreator from "../objects/BoardCreator";
-import Point from "../objects/Point";
 import Tile from "./Tile";
 
 const MovingTile = (props) => {
@@ -21,7 +19,8 @@ const MovingTile = (props) => {
                 prevPoint={boardCreator.boardStartPoint}
                 nextPoint={boardCreator.getMovingObjectNextPoint(index)}
                 color={color}
-                onClickHandler={ () => {}}
+                onClickHandler={() => {
+                }}
                 isFocused={false}
                 prevFocused={false}
             />

@@ -24,9 +24,9 @@ const BaseObject = (props) => {
                 zIndex: 0
             }}
             style={{
-                x: spring( nextPoint.x, {damping: 12}),
-                y: spring( nextPoint.y, {damping: 12}),
-                z: spring( nextPoint.z, {damping: 12}),
+                x: spring(nextPoint.x, {damping: 12}),
+                y: spring(nextPoint.y, {damping: 12}),
+                z: spring(nextPoint.z, {damping: 12}),
                 s: spring(scalar),
                 o: spring(opacity),
                 zIndex: zIndex

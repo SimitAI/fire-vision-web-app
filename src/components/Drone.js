@@ -14,7 +14,7 @@ const Drone = (props) => {
     } = {...props}
 
     const prevPoint = boardCreator.boardStartPoint;
-    const nextPoint = boardCreator.getMovingObjectNextPoint(index);
+    const nextPoint = boardCreator.getDronePoint(index);
 
     const shiftLeft = (width - width * scale) / 2;
     const shiftTop = (height - height * scale) / 2;
@@ -42,7 +42,8 @@ const Drone = (props) => {
                 scalar={1}
                 opacity={1}
                 zIndex={3}
-                onClickHandler={() => {}}
+                onClickHandler={() => {
+                }}
             >
                 {
                     <DroneIcon

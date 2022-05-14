@@ -2,11 +2,11 @@ import Random from "./Random";
 
 const path = "images";
 const SAFE = "/safe";
-const MAX_SAFE = -1;
+const MAX_SAFE = 114;
 const FIRE = "/fire";
-const MAX_FIRE = 485;
+const MAX_FIRE = 121;
 const HUMAN = "/human";
-const MAX_HUMAN = -1;
+const MAX_HUMAN = 131;
 
 class ImageManager {
 
@@ -15,6 +15,7 @@ class ImageManager {
         this.usedSafe = [];
         this.usedFire = [];
         this.usedHuman = [];
+        this.imageMap = new Map();
     }
 
     getUniqueImageId(arr, max) {
@@ -25,13 +26,31 @@ class ImageManager {
         return id;
     }
 
-    getRandomImage() {
-        if (Random.randPercent(0)) {
-            return `${this.path}${SAFE}/${this.getUniqueImageId(this.usedSafe, MAX_SAFE)}.jpg`;
-        } else if (Random.randPercent(100)) {
-            return `${this.path}${FIRE}/${this.getUniqueImageId(this.usedFire, MAX_FIRE)}.jpg`;
+    getImage(tileId) {
+        if (this.imageMap.has(tileId)) {
+            return this.imageMap.get(tileId);
+        }
+
+        let imageId;
+        let imagePath;
+        if (Random.randPercent(80)) {
+            imageId = this.getUniqueImageId(this.usedSafe, MAX_SAFE);
+            this.usedSafe.push(imageId);
+            imagePath = `${this.path}${SAFE}/${imageId}.jpg`;
+            this.imageMap.set(tileId, imagePath);
+            return imagePath;
+        } else if (Random.randPercent(30)) {
+            imageId = this.getUniqueImageId(this.usedFire, MAX_FIRE);
+            this.usedFire.push(imageId);
+            imagePath = `${this.path}${FIRE}/${imageId}.jpg`;
+            this.imageMap.set(tileId, imagePath);
+            return imagePath;
         } else {
-            return `${this.path}${HUMAN}/${this.getUniqueImageId(this.usedHuman, MAX_HUMAN)}.jpg`;
+            imageId = this.getUniqueImageId(this.usedHuman, MAX_HUMAN);
+            this.usedHuman.push(imageId);
+            imagePath = `${this.path}${HUMAN}/${imageId}.jpg`;
+            this.imageMap.set(tileId, imagePath);
+            return imagePath
         }
     }
 

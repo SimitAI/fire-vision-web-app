@@ -5,6 +5,7 @@ import Board from "./components/Board";
 import Drone from "./components/Drone";
 import TileState from "./objects/TileState";
 import Random from "./objects/Random";
+import ImageManager from "./objects/ImageManager";
 
 function App() {
 
@@ -26,7 +27,10 @@ function App() {
         Point.screen00.y + boardPadding,
         0
     );
-    const boardCreator = new BoardCreator(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding);
+
+
+    const [imageManager, setImageManager] = useState(new ImageManager());
+    const boardCreator = new BoardCreator(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding, imageManager);
 
     const droneColor = "gainsboro";
     const droneScale = 0.75;

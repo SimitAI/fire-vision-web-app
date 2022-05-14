@@ -1,9 +1,8 @@
 import Point from "./Point";
-import ImageManager from "./ImageManager";
 
 class BoardCreator {
 
-    constructor(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding) {
+    constructor(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding, imageManager) {
         this.rowNum = rowNum;
         this.colNum = colNum;
         this.boardStartPoint = boardStartPoint;
@@ -12,7 +11,7 @@ class BoardCreator {
         this.tilePadding = tilePadding;
         this.board = [];
         this.tilePoints = [];
-        this.imageManager = new ImageManager();
+        this.imageManager = imageManager;
     }
 
     create() {
@@ -32,8 +31,15 @@ class BoardCreator {
 
                 this.tilePoints.push(prevPoint);
 
+                let tileId = 10 * i + j
+                let tileImage = this.imageManager.getImage(tileId);
+
+                console.log(tileId);
+                console.log(tileImage);
+                console.log(this.imageManager);
+
                 row.tiles.push({
-                    id: 10 * i + j,
+                    id: tileId,
                     width: this.tileWidth,
                     height: this.tileHeight,
                     prevPoint: prevPoint,
@@ -42,7 +48,7 @@ class BoardCreator {
                         0,
                         0
                     ),
-                    image: this.imageManager.getRandomImage()
+                    image: tileImage
                 });
             }
             this.board.push(row);

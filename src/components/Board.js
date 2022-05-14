@@ -28,7 +28,6 @@ const Board = (props) => {
 
     const drawBoard = () => {
         boardCreator.create();
-        console.log(boardCreator.board);
         return (
             <div
                 id={"board"}

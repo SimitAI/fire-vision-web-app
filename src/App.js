@@ -4,8 +4,9 @@ import {useEffect, useState} from "react";
 import Board from "./components/Board";
 import Drone from "./components/Drone";
 import TileState from "./objects/TileState";
-import Random from "./objects/Random";
 import ImageManager from "./objects/ImageManager";
+import NetworkConnection from "./objects/NetworkConnection";
+import Random from "./objects/Random";
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
 
     const [imageManager, setImageManager] = useState(new ImageManager());
     const boardCreator = new BoardCreator(rowNum, colNum, boardStartPoint, tileWidth, tileHeight, tilePadding, imageManager);
+    const connection = new NetworkConnection();
 
     const droneColor = "gainsboro";
     const droneScale = 0.75;
@@ -46,6 +48,23 @@ function App() {
         } else {
             return TileState.HUMAN;
         }
+    }
+
+    const update = async (longitude, latitude, url) => {
+        let response = await connection.sendRequest(longitude, latitude, url);
+
+        if (response) {
+            if (response.includes("fire")) {
+                return TileState.FIRE;
+            } else if (response.includes("person")) {
+                return TileState.HUMAN;
+            } else {
+                return TileState.SAFE;
+            }
+        } else {
+            return -1;
+        }
+
     }
 
     useEffect(() => {
@@ -118,21 +137,27 @@ function App() {
         })
     }, [tilesBeingExplored]);
 
-    const btnClickHandler = (e) => {
+    const btnClickHandler = async (e) => {
         const newDronesState = [];
 
-        drones.forEach(drone => {
+        for (const drone of drones) {
             let currPos = drone.path[drone.index];
             let id = Math.floor(currPos / 8) * 10 + currPos % 8;
             drone.index = (drone.index + 1) % drone.path.length;
 
             newDronesState.push(drone);
 
+            let newState = await update(
+                id % 10,
+                Math.floor(id / 10),
+                boardCreator.getTile(id).image
+            );
+
             setChangedTileStates(prevState => ({
                 ...prevState,
-                [id]: randomState()
+                [id]: newState
             }));
-        });
+        }
 
         setDrones(newDronesState);
     }
@@ -187,7 +212,6 @@ function App() {
                         Click
                     </button>
                 </div>
-
             </div>
 
         );

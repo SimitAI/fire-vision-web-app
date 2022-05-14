@@ -34,10 +34,6 @@ class BoardCreator {
                 let tileId = 10 * i + j
                 let tileImage = this.imageManager.getImage(tileId);
 
-                console.log(tileId);
-                console.log(tileImage);
-                console.log(this.imageManager);
-
                 row.tiles.push({
                     id: tileId,
                     width: this.tileWidth,

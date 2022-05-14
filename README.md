@@ -1,3 +1,3 @@
-# Demo for FireVision
+# FireVision Web Application
 
 ![Example](./example.gif)

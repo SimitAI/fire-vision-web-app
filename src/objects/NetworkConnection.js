@@ -1,4 +1,4 @@
-const serverURL = "http://44.203.36.22:8000/image";
+const serverURL = "http://54.209.157.254:8000/image";
 
 class NetworkConnection {
 

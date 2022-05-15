@@ -33,6 +33,8 @@ const Tile = (props) => {
                 return "blue";
             case TileState.FIRE:
                 return "red";
+            case TileState.DANGER:
+                return "orange";
             default:
                 return "black";
         }

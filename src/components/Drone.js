@@ -47,7 +47,7 @@ const Drone = (props) => {
             >
                 {
                     <DroneIcon
-                        alternative={false}
+                        alternative={true}
                         width={width * scale}
                         height={height * scale}
                         color={color}

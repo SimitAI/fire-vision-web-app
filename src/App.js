@@ -51,10 +51,13 @@ function App() {
     }
 
     const update = async (longitude, latitude, url) => {
-        let response = await connection.sendRequest(longitude, latitude, url);
+        let response = await connection.sendRequest(longitude, latitude, url)
+            .catch(ex => null);
 
         if (response) {
-            if (response.includes("fire")) {
+            if (response.includes("fire") && response.includes("person")) {
+                return TileState.DANGER;
+            } else if (response.includes("fire")) {
                 return TileState.FIRE;
             } else if (response.includes("person")) {
                 return TileState.HUMAN;

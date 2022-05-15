@@ -3,7 +3,8 @@ const TileState = Object.freeze({
     EXPLORING: 1,
     SAFE: 2,
     HUMAN: 3,
-    FIRE: 4
+    FIRE: 4,
+    DANGER: 5
 });
 
 export default TileState;
